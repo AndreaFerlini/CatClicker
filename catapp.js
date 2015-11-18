@@ -1,25 +1,31 @@
 var clicknumb=0;
 
-var temp = "<li id='ID'><h1>NAME</h1><img src='IMG'><div id='count_X'> # clicks: CLICK_ON</div></li> ";
+var temp = "<li id='ID'><h1>NAME</h1><img src='IMG' width='200' height='200'><div id='count_X'> # clicks: CLICK_ON</div></li> ";
 
 var temp_name = "<li id='ID'> <h1>NAME</h1> </li> ";
 
 $(document).ready(function(){
-  //console.log(data.length);
-  //load_cats();
-  //$(".admin-btn").hide();
+  hide_admin();
   load_name();
-  click_on_cat();
-
-
 });
 
+/* FUNCTIONS */
+
+function hide_admin(){
+  $(".btn-admin").hide();
+  $(".admin-mod").hide();
+};
+
 function load_name(){
+  $(".cats_names").html("");
+  $(".cats").html("");
+  $(".cats_names").show();
   for(var i=0; i<data.length; i++){
     var temp2;
     temp2 = temp_name.replace("ID", i).replace("NAME", data[i].cat_name);
     $(".cats_names").append(temp2);
   }
+  click_on_cat();
 };
 
 function click_on_cat(){
@@ -35,36 +41,47 @@ function load_sel_cat(i){
           .replace("IMG", data[i].img).replace("X", i).replace("CLICK_ON", data[i].click_number);
   $(".cats").append(temp1);
   click_counter();
-  //$(".admin-btn").hide();
+  $(".btn-admin").show();
+  click_admin();
 };
-
 
 function click_counter(){
   $(".cats li").click(function(){
 
-    var k = $(this).attr('id'); //funziona perché ho l'id nel tag <li, this si riferisce ai tags html
-    console.log(k);
+    var k = $(this).attr('id');
     data[k].click_number ++;
     $("#count_"+k).html("# clicks: "+data[k].click_number);
   })
 };
 
-/*
-function load_cats(){
-  $(".cats").html("");
-  for(var i=0; i < data.length; i++){
-    var temp1;
-    temp1 = temp.replace("ID", i).replace("NAME", data[i].cat_name)
-            .replace("IMG", data[i].img).replace("X", i).replace("CLICK_ON", data[i].click_number);
-    $(".cats").append(temp1);
-  }
-};
+/*ADMIN MODE FUNCTIONS*/
+function click_admin(){
+  $(".btn-admin").click(function(){
+    var n=$(".cats li").attr('id');
+    $(".admin-mod").show();
+    $("input[name=cat-name-text]").val(data[n].cat_name);
+    $("input[name=cat-clicks-text]").val(data[n].click_number);
+    click_cancel();
+    click_save();
 
-function click_counter(){
-  $(".cats li").click(function(){
-    var k = $(this).attr('id'); //funziona perché ho l'id nel tag <li, this si riferisce ai tags html
-    data[k].click_number ++;
-    $("#count_"+k).html("# clicks: "+data[k].click_number);
   })
 };
-*/
+
+function click_cancel(){
+    $(".btn-cancel").click(function(){
+        hide_admin();
+        load_name();
+        //location.refresh(); //è il refresh della pagina!
+    })
+};
+
+function click_save(){
+    $(".btn-save").click(function(){
+      var n=$(".cats li").attr('id');
+      data[n].cat_name = $("input[name=cat-name-text]").val();
+      data[n].click_number = $("input[name=cat-clicks-text]").val();
+      alert ("New content saved!");
+      hide_admin();
+      load_name();
+    })
+};
